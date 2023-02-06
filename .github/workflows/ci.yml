@@ -14,6 +14,4 @@ jobs:
         node-version: 16.x
     - run: npm install
     - run: |
-        apt update
-        apt install -y libasound2 libgbm1 libgtk-3-0 libnss3 xvfb
         xvfb-run -a npm test
