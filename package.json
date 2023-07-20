@@ -159,6 +159,11 @@
         "command": "swift.attachDebugger",
         "title": "Attach to Process...",
         "category": "Swift"
+      },
+      {
+        "command": "swift.previewDocumentation",
+        "title": "Toggle Display of Documentation Preview",
+        "category": "Swift"
       }
     ],
     "configuration": [

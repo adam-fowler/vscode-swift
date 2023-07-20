@@ -822,6 +822,79 @@ async function attachDebugger(workspaceContext: WorkspaceContext) {
     }
 }
 
+function previewDocumentation() {
+    const webViewPanel = vscode.window.createWebviewPanel(
+        "swift.documentation",
+        "Documentation Preview",
+        vscode.ViewColumn.Two,
+        { enableScripts: true }
+    );
+    const address = "http://localhost:8080/documentation/mqttnio";
+    /*const uri = vscode.Uri.parse(
+        "http://localhost:8080/documentation/hummingbird/logging,-metrics-and-tracing"
+    );
+    vscode.workspace.fs.readFile(uri).then(data => {
+        const html = data.toString();
+        webViewPanel.webview.html = html;
+    });*/
+    webViewPanel.webview.html = `<!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <style>
+        html, body {
+            height: 100%;
+            min-height: 100%;
+            padding: 0;
+            margin: 0;
+            min-width: 200px;
+        }
+        #navigation {
+            width: 100%;
+            height: 32px;
+            margin: 4px 8px;
+            font-size: 150%;
+        }
+        .button {
+            margin-left: 4px;
+            margin-right: 4px;
+            color: black;
+        }
+        .button:hover {
+            cursor: pointer;
+            color: dark-grey;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100% - 40px);
+        }
+        </style>
+    </head>
+    <body>
+    <div id="navigation" display: "block">
+        <span id="reload" class="button">&#x21bb;</span>
+    </div>
+    <iframe id="iframe" src="${address}" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+    <script>
+    const iframe = document.getElementById("iframe");
+    const reloadButton = document.getElementById("reload");
+    
+    reloadButton.addEventListener('click', () => {
+		iframe.src = iframe.src;
+	});
+    
+    iframe.addEventListener('load', () => {
+		console.log(iframe.src);
+	});
+    </script>
+    </body>
+    </html>
+    `;
+    webViewPanel.webview.onDidReceiveMessage(message => {
+        console.log(message);
+    });
+}
+
 function updateAfterError(result: boolean, folderContext: FolderContext) {
     const triggerResolvedUpdatedEvent = folderContext.hasResolveErrors;
     // set has resolve errors flag
@@ -865,6 +938,7 @@ export function register(ctx: WorkspaceContext) {
         vscode.commands.registerCommand("swift.toggleTestCoverage", () =>
             toggleTestCoverageDisplay(ctx)
         ),
+        vscode.commands.registerCommand("swift.previewDocumentation", () => previewDocumentation()),
         vscode.commands.registerCommand("swift.useLocalDependency", item => {
             if (item instanceof PackageNode) {
                 useLocalDependency(item.name, ctx);
