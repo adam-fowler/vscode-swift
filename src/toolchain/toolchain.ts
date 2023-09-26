@@ -58,25 +58,50 @@ export enum DarwinCompatibleTarget {
     watchOS = "watchOS",
 }
 
-export function getDarwinSDKName(target: DarwinCompatibleTarget): string {
-    switch (target) {
-        case DarwinCompatibleTarget.iOS:
-            return "iphoneos";
-        case DarwinCompatibleTarget.tvOS:
-            return "appletvos";
-        case DarwinCompatibleTarget.watchOS:
-            return "watchos";
+/**
+ * Defines an LLVM target triple
+ */
+export class Triple {
+    constructor(
+        // system architecture
+        public arch: string,
+        // target vendor
+        public vendor: string,
+        // system name
+        public sys: string,
+        // environment
+        public env: string | undefined = undefined
+    ) {}
+
+    /** Output target string */
+    asString(): string {
+        let s = `${this.arch}-${this.vendor}-${this.sys}`;
+        if (this.env) {
+            s += `-${this.env}`;
+        }
+        return s;
     }
 }
 
-export function getDarwinTargetTriple(target: DarwinCompatibleTarget): string | undefined {
+export function getDarwinSDKName(target: DarwinCompatibleTarget): string {
     switch (target) {
         case DarwinCompatibleTarget.iOS:
-            return "arm64-apple-ios";
+            return "iphonesimulator";
         case DarwinCompatibleTarget.tvOS:
-            return "arm64-apple-tvos";
+            return "appletvsimulator";
         case DarwinCompatibleTarget.watchOS:
-            return "arm64-apple-watchos";
+            return "watchsimulator";
+    }
+}
+
+export function getDarwinTargetTriple(target: DarwinCompatibleTarget): Triple | undefined {
+    switch (target) {
+        case DarwinCompatibleTarget.iOS:
+            return new Triple("arm64", "apple", "ios", "simulator");
+        case DarwinCompatibleTarget.tvOS:
+            return new Triple("arm64", "apple", "tvos", "simulator");
+        case DarwinCompatibleTarget.watchOS:
+            return new Triple("arm64", "apple", "watchos", "simulator");
     }
 }
 

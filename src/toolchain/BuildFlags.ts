@@ -125,9 +125,9 @@ export class BuildFlags {
      */
     getDarwinTarget(): DarwinTargetInfo | undefined {
         const targetMap = [
-            { name: "iPhoneOS", target: DarwinCompatibleTarget.iOS },
-            { name: "AppleTVOS", target: DarwinCompatibleTarget.tvOS },
-            { name: "WatchOS", target: DarwinCompatibleTarget.watchOS },
+            { name: "iPhoneSimulator", target: DarwinCompatibleTarget.iOS },
+            { name: "AppleTVSimulator", target: DarwinCompatibleTarget.tvOS },
+            { name: "WatchSimulator", target: DarwinCompatibleTarget.watchOS },
         ];
 
         if (configuration.sdk === "" || process.platform !== "darwin") {
@@ -161,8 +161,13 @@ export class BuildFlags {
         if (!target) {
             return [];
         }
-        const args = ["-target", `${getDarwinTargetTriple(target.target)}${target.version}`];
-        return indirect ? args.flatMap(arg => ["-Xswiftc", arg]) : args;
+        const triple = getDarwinTargetTriple(target.target);
+        if (triple) {
+            triple.sys += `${target.version}`;
+            const args = ["-target", triple.asString()];
+            return indirect ? args.flatMap(arg => ["-Xswiftc", arg]) : args;
+        }
+        return [];
     }
 
     /**
