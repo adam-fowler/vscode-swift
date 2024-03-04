@@ -270,6 +270,12 @@
             "default": false,
             "markdownDescription": "Disables automated Build Tasks, Package Dependency view, Launch configuration generation and TestExplorer.",
             "order": 13
+          },
+          "swift.enableSwiftTesting": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "**Experimental**: Enable testing using swift-testing.",
+            "order": 14
           }
         }
       },

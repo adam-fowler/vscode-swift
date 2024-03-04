@@ -169,7 +169,10 @@ export class TestExplorer {
      */
     async discoverTestsInWorkspace() {
         const toolchain = this.folderContext.workspaceContext.toolchain;
-        if (toolchain.swiftVersion.isLessThan(new Version(5, 11, 0))) {
+        if (
+            toolchain.swiftVersion.isLessThan(new Version(5, 11, 0)) ||
+            configuration.enableSwiftTesting
+        ) {
             await this.discoverTestsInWorkspaceSPM();
         } else {
             try {
