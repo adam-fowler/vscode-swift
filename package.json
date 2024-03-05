@@ -271,10 +271,10 @@
             "markdownDescription": "Disables automated Build Tasks, Package Dependency view, Launch configuration generation and TestExplorer.",
             "order": 13
           },
-          "swift.enableSwiftTesting": {
+          "swift.useSwiftTesting": {
             "type": "boolean",
             "default": false,
-            "markdownDescription": "**Experimental**: Enable testing using swift-testing.",
+            "markdownDescription": "**Experimental**: Use swift-testing as your testing framework. This will disable XCTest tests. This is only available with Swift 6 and later.",
             "order": 14
           }
         }

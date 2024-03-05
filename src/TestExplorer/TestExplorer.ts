@@ -70,7 +70,7 @@ export class TestExplorer {
                 // only run discover tests if the library has tests
                 if (
                     this.folderContext.swiftPackage.getTargets(TargetType.test).length > 0 ||
-                    configuration.enableSwiftTesting
+                    configuration.useSwiftTesting
                 ) {
                     this.discoverTestsInWorkspace();
                 }
@@ -103,7 +103,7 @@ export class TestExplorer {
                     if (folder) {
                         if (
                             folder.swiftPackage.getTargets(TargetType.test).length > 0 ||
-                            configuration.enableSwiftTesting
+                            configuration.useSwiftTesting
                         ) {
                             folder.addTestExplorer();
                             // discover tests in workspace but only if disableAutoResolve is not on.
@@ -118,7 +118,7 @@ export class TestExplorer {
                     if (folder) {
                         const hasTestTargets =
                             folder.swiftPackage.getTargets(TargetType.test).length > 0 ||
-                            configuration.enableSwiftTesting;
+                            configuration.useSwiftTesting;
                         if (hasTestTargets && !folder.hasTestExplorer()) {
                             folder.addTestExplorer();
                             // discover tests in workspace but only if disableAutoResolve is not on.
@@ -178,7 +178,7 @@ export class TestExplorer {
         const toolchain = this.folderContext.workspaceContext.toolchain;
         if (
             toolchain.swiftVersion.isLessThan(new Version(5, 11, 0)) ||
-            configuration.enableSwiftTesting
+            configuration.useSwiftTesting
         ) {
             await this.discoverTestsInWorkspaceSPM();
         } else {
@@ -222,7 +222,7 @@ export class TestExplorer {
                 listTestArguments = ["test", "--list-tests", "--skip-build"];
             }
             listTestArguments = [...listTestArguments, ...testBuildOptions];
-            if (configuration.enableSwiftTesting) {
+            if (configuration.useSwiftTesting) {
                 listTestArguments.push("--disable-xctest");
             }
             const listTestsOperation = new SwiftExecOperation(

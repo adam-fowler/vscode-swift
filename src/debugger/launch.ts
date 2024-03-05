@@ -181,7 +181,7 @@ export function createTestConfiguration(
 ): vscode.DebugConfiguration | null {
     if (
         ctx.swiftPackage.getTargets(TargetType.test).length === 0 &&
-        !configuration.enableSwiftTesting
+        !configuration.useSwiftTesting
     ) {
         return null;
     }
@@ -202,7 +202,7 @@ export function createTestConfiguration(
         cwd: folder,
         preLaunchTask: `swift: Build All${nameSuffix}`,
     };
-    if (configuration.enableSwiftTesting) {
+    if (configuration.useSwiftTesting) {
         // For swift testing, just return the .swift-testing executable from the configured build directory.
         return {
             ...baseConfig,

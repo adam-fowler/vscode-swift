@@ -91,7 +91,7 @@ export class TestRunner {
             true
         );
         // Add non-debug profile
-        if (!configuration.enableSwiftTesting) {
+        if (!configuration.useSwiftTesting) {
             controller.createRunProfile(
                 "Run Tests (Parallel)",
                 vscode.TestRunProfileKind.Run,
@@ -249,7 +249,7 @@ export class TestRunner {
     ): vscode.DebugConfiguration | null {
         const testList = this.testArgs.join(",");
 
-        if (configuration.enableSwiftTesting) {
+        if (configuration.useSwiftTesting) {
             const testBuildConfig = createTestConfiguration(this.folderContext, true);
             if (testBuildConfig === null) {
                 return null;
@@ -440,7 +440,7 @@ export class TestRunner {
     ) {
         let stdout: stream.Writable;
         let stderr: stream.Writable;
-        if (configuration.enableSwiftTesting) {
+        if (configuration.useSwiftTesting) {
             stdout = outputStream;
             stderr = parsedOutputStream;
         } else if (process.platform === "darwin") {
@@ -475,7 +475,7 @@ export class TestRunner {
                 throw error;
             }
         }
-        if (configuration.enableSwiftTesting) {
+        if (configuration.useSwiftTesting) {
             await this.parseXUnitOutput(xUnitFilename);
         }
     }
@@ -512,7 +512,7 @@ export class TestRunner {
                 throw error;
             }
         }
-        if (configuration.enableSwiftTesting) {
+        if (configuration.useSwiftTesting) {
             await this.parseXUnitOutput(xUnitFilename);
         }
         await this.folderContext.lcovResults.generate();
@@ -600,7 +600,7 @@ export class TestRunner {
             );
             LoggingDebugAdapterTracker.setDebugSessionCallback(session, output => {
                 this.testRun.appendOutput(output);
-                if (!configuration.enableSwiftTesting) {
+                if (!configuration.useSwiftTesting) {
                     this.testOutputParser.parseResult(output, runState, testRegex);
                 }
             });
@@ -628,7 +628,7 @@ export class TestRunner {
 
                         const terminateSession = vscode.debug.onDidTerminateDebugSession(
                             async () => {
-                                if (configuration.enableSwiftTesting) {
+                                if (configuration.useSwiftTesting) {
                                     await this.parseXUnitOutput(xUnitFilename);
                                 }
                                 this.workspaceContext.outputChannel.logDiagnostic(

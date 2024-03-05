@@ -180,8 +180,8 @@ const configuration = {
             .getConfiguration("swift")
             .get<boolean>("disableSwiftPackageManagerIntegration", false);
     },
-    get enableSwiftTesting(): boolean {
-        return vscode.workspace.getConfiguration("swift").get<boolean>("enableSwiftTesting", false);
+    get useSwiftTesting(): boolean {
+        return vscode.workspace.getConfiguration("swift").get<boolean>("useSwiftTesting", false);
     },
     /** Environment variables to set when building */
     get swiftEnvironmentVariables(): { [key: string]: string } {
