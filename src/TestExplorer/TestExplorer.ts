@@ -68,7 +68,10 @@ export class TestExplorer {
             ) {
                 this.testFileEdited = false;
                 // only run discover tests if the library has tests
-                if (this.folderContext.swiftPackage.getTargets(TargetType.test).length > 0) {
+                if (
+                    this.folderContext.swiftPackage.getTargets(TargetType.test).length > 0 ||
+                    configuration.enableSwiftTesting
+                ) {
                     this.discoverTestsInWorkspace();
                 }
             }
@@ -98,7 +101,10 @@ export class TestExplorer {
             switch (event) {
                 case FolderEvent.add:
                     if (folder) {
-                        if (folder.swiftPackage.getTargets(TargetType.test).length > 0) {
+                        if (
+                            folder.swiftPackage.getTargets(TargetType.test).length > 0 ||
+                            configuration.enableSwiftTesting
+                        ) {
                             folder.addTestExplorer();
                             // discover tests in workspace but only if disableAutoResolve is not on.
                             // discover tests will kick off a resolve if required
@@ -111,7 +117,8 @@ export class TestExplorer {
                 case FolderEvent.packageUpdated:
                     if (folder) {
                         const hasTestTargets =
-                            folder.swiftPackage.getTargets(TargetType.test).length > 0;
+                            folder.swiftPackage.getTargets(TargetType.test).length > 0 ||
+                            configuration.enableSwiftTesting;
                         if (hasTestTargets && !folder.hasTestExplorer()) {
                             folder.addTestExplorer();
                             // discover tests in workspace but only if disableAutoResolve is not on.

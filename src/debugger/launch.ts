@@ -179,7 +179,10 @@ export function createTestConfiguration(
     ctx: FolderContext,
     expandEnvVariables = false
 ): vscode.DebugConfiguration | null {
-    if (ctx.swiftPackage.getTargets(TargetType.test).length === 0) {
+    if (
+        ctx.swiftPackage.getTargets(TargetType.test).length === 0 &&
+        !configuration.enableSwiftTesting
+    ) {
         return null;
     }
 
@@ -199,7 +202,19 @@ export function createTestConfiguration(
         cwd: folder,
         preLaunchTask: `swift: Build All${nameSuffix}`,
     };
-    if (process.platform === "darwin") {
+    if (configuration.enableSwiftTesting) {
+        // For swift testing, just return the .swift-testing executable from the configured build directory.
+        return {
+            ...baseConfig,
+            program: path.join(
+                buildDirectory,
+                "debug",
+                ctx.swiftPackage.name + "PackageTests.swift-testing"
+            ),
+            args: ["--disable-xctest"],
+            env: testEnv,
+        };
+    } else if (process.platform === "darwin") {
         // On macOS, find the path to xctest
         // and point it at the .xctest bundle from the configured build directory.
         const xctestPath = ctx.workspaceContext.toolchain.xcTestPath;
