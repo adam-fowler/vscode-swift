@@ -91,14 +91,16 @@ export class TestRunner {
             true
         );
         // Add non-debug profile
-        controller.createRunProfile(
-            "Run Tests (Parallel)",
-            vscode.TestRunProfileKind.Run,
-            async (request, token) => {
-                const runner = new TestRunner(request, folderContext, controller);
-                await runner.runHandler(false, TestKind.parallel, token);
-            }
-        );
+        if (!configuration.enableSwiftTesting) {
+            controller.createRunProfile(
+                "Run Tests (Parallel)",
+                vscode.TestRunProfileKind.Run,
+                async (request, token) => {
+                    const runner = new TestRunner(request, folderContext, controller);
+                    await runner.runHandler(false, TestKind.parallel, token);
+                }
+            );
+        }
         // Add coverage profile
         controller.createRunProfile(
             "Test Coverage",

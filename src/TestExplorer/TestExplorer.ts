@@ -215,6 +215,9 @@ export class TestExplorer {
                 listTestArguments = ["test", "--list-tests", "--skip-build"];
             }
             listTestArguments = [...listTestArguments, ...testBuildOptions];
+            if (configuration.enableSwiftTesting) {
+                listTestArguments.push("--disable-xctest");
+            }
             const listTestsOperation = new SwiftExecOperation(
                 listTestArguments,
                 this.folderContext,
