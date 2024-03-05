@@ -27,7 +27,7 @@ export interface TestResults {
 }
 
 interface XUnitFailure {
-    message?: string;
+    $: { message?: string };
 }
 
 interface XUnitTestCase {
@@ -74,7 +74,7 @@ export class TestXUnitParser {
             testsuite.testcase.forEach(testcase => {
                 const id = `${testcase.$.classname}/${testcase.$.name}`;
                 if (testcase.failure) {
-                    runState.failTest(id, testcase.$.time, testcase.failure.shift()?.message);
+                    runState.failTest(id, testcase.$.time, testcase.failure.shift()?.$.message);
                 } else {
                     runState.passTest(id, testcase.$.time);
                 }
