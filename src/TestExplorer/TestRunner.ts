@@ -19,7 +19,11 @@ import * as cp from "child_process";
 import * as asyncfs from "fs/promises";
 import { createTestConfiguration, createDarwinTestConfiguration } from "../debugger/launch";
 import { FolderContext } from "../FolderContext";
-import { execFileStreamOutput, getErrorDescription } from "../utilities/utilities";
+import {
+    execFileStreamOutput,
+    getErrorDescription,
+    regexEscapedString,
+} from "../utilities/utilities";
 import { getBuildAllTask } from "../SwiftTaskProvider";
 import configuration from "../configuration";
 import { WorkspaceContext } from "../WorkspaceContext";
@@ -260,7 +264,7 @@ export class TestRunner {
                     ...testBuildConfig.args,
                     "--xunit-output",
                     xUnitFilename,
-                    ...this.testArgs.flatMap(arg => ["--filter", arg]),
+                    ...this.testArgs.flatMap(arg => ["--filter", regexEscapedString(arg)]),
                 ];
             }
             // output test logging to debug console so we can catch it with a tracker
@@ -687,7 +691,7 @@ export class TestRunner {
         }
     }
 
-    /** Get Test parsing regex for current platform */
+    /** Get Test parsing regex for current platform when parsing XCTest output */
     get testRegex(): TestRegex {
         if (process.platform === "darwin") {
             return darwinTestRegex;
