@@ -20,6 +20,7 @@ import * as asyncfs from "fs/promises";
 import { createTestConfiguration, createDarwinTestConfiguration } from "../debugger/launch";
 import { FolderContext } from "../FolderContext";
 import {
+    execFile,
     execFileStreamOutput,
     getErrorDescription,
     regexEscapedString,
@@ -620,6 +621,15 @@ export class TestRunner {
         });
         subscriptions.push(startSession);
 
+        if (configuration.useSwiftTesting) {
+            execFile("mkfifo", ["/tmp/test.fifo"]);
+            testBuildConfig.args = [
+                ...testBuildConfig.args,
+                "--experimental-event-stream-output",
+                "/tmp/test.fifo",
+            ];
+        }
+
         return new Promise<void>((resolve, reject) => {
             vscode.debug.startDebugging(this.folderContext.workspaceFolder, testBuildConfig).then(
                 started => {
@@ -629,7 +639,6 @@ export class TestRunner {
                         );
                         // show test results pane
                         vscode.commands.executeCommand("testing.showMostRecentOutput");
-
                         const terminateSession = vscode.debug.onDidTerminateDebugSession(
                             async () => {
                                 if (configuration.useSwiftTesting) {
@@ -645,6 +654,8 @@ export class TestRunner {
                             }
                         );
                         subscriptions.push(terminateSession);
+
+                        this.readJsonStream("/tmp/test.fifo");
                     } else {
                         subscriptions.forEach(sub => sub.dispose());
                         reject();
@@ -656,6 +667,34 @@ export class TestRunner {
                 }
             );
         });
+    }
+
+    async readJsonStream(path: string) {
+        let fileHandle: asyncfs.FileHandle | undefined;
+        try {
+            fileHandle = await asyncfs.open(path, "r");
+            const sizeReadBuffer = Buffer.alloc(8);
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                // read event size
+                const sizeBuffer = await fileHandle.read({ buffer: sizeReadBuffer });
+                if (sizeBuffer.bytesRead < 8) {
+                    break;
+                }
+                const size = sizeBuffer.buffer.readIntLE(0, 6);
+                const eventReadBuffer = Buffer.alloc(size);
+                const eventBuffer = await fileHandle.read({ buffer: eventReadBuffer });
+                if (eventBuffer.bytesRead < size) {
+                    break;
+                }
+                const eventString = eventBuffer.buffer.toString("utf8");
+                const event = JSON.parse(eventString);
+                console.log(event);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        await fileHandle?.close();
     }
 
     async parseXUnitOutput(filename: string) {
