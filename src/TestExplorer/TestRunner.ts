@@ -372,9 +372,9 @@ export class TestRunner {
                 // Process was killed
                 this.testRun.appendOutput(`\r\nProcess killed.`);
                 return;
-            } else if (execError.signal === "SIGILL") {
-                // Process crashed
-                this.testRun.appendOutput(`\r\nProcess crashed.`);
+            } else if (execError.signal) {
+                // Process ended with a signal
+                this.testRun.appendOutput(`\r\nProcess ended (${execError.signal}).`);
                 if (runState.currentTestItem) {
                     // get last line of error message, which should include why it crashed
                     const errorMessagesLines = execError.message.match(/[^\r\n]+/g);
