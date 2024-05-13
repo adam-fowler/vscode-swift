@@ -21,6 +21,7 @@ type OpenAfterCreateNewProjectOptions =
     | "alwaysNewWindow"
     | "whenNoFolderOpen"
     | "prompt";
+type DebugAdapter = "Toolchain" | "CodeLLDB";
 
 /** sourcekit-lsp configuration */
 export interface LSPConfiguration {
@@ -41,7 +42,7 @@ export interface LSPConfiguration {
 /** debugger configuration */
 export interface DebuggerConfiguration {
     /** Are we using debug adapter provided with Toolchain */
-    readonly useDebugAdapterFromToolchain: boolean;
+    readonly debugAdapter: DebugAdapter;
     /** Return path to debug adapter */
     readonly debugAdapterPath: string;
 }
@@ -137,10 +138,10 @@ const configuration = {
     get debugger(): DebuggerConfiguration {
         return {
             /** Should we use the debug adapter included in the Toolchain or CodeLLDB */
-            get useDebugAdapterFromToolchain(): boolean {
+            get debugAdapter(): DebugAdapter {
                 return vscode.workspace
                     .getConfiguration("swift.debugger")
-                    .get<boolean>("useDebugAdapterFromToolchain", false);
+                    .get<DebugAdapter>("debugAdapter", "Toolchain");
             },
             get debugAdapterPath(): string {
                 return vscode.workspace.getConfiguration("swift.debugger").get<string>("path", "");

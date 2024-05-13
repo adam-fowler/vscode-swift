@@ -232,7 +232,7 @@ export function createTestConfiguration(
         }
         let preRunCommands: string[] | undefined;
         if (
-            configuration.debugger.useDebugAdapterFromToolchain ||
+            configuration.debugger.debugAdapter === "Toolchain" ||
             vscode.workspace.getConfiguration("lldb")?.get<string>("library")
         ) {
             preRunCommands = [`settings set target.sdk-path ${sdkroot}`];

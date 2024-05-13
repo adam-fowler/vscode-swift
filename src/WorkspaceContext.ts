@@ -146,10 +146,10 @@ export class WorkspaceContext implements vscode.Disposable {
             }
             // on change of swift debugger type
             if (
-                event.affectsConfiguration("swift.debugger.useDebugAdapterFromToolchain") ||
+                event.affectsConfiguration("swift.debugger.debugAdapter") ||
                 event.affectsConfiguration("swift.debugger.path")
             ) {
-                if (configuration.debugger.useDebugAdapterFromToolchain) {
+                if (configuration.debugger.debugAdapter === "Toolchain") {
                     if (!(await DebugAdapter.verifyDebugAdapterExists(this))) {
                         return;
                     }

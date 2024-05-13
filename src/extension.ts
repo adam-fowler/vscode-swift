@@ -161,7 +161,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Api> {
 
         const testExplorerObserver = TestExplorer.observeFolders(workspaceContext);
 
-        if (configuration.debugger.useDebugAdapterFromToolchain) {
+        if (configuration.debugger.debugAdapter === "Toolchain") {
             const lldbDebugAdapter = registerLLDBDebugAdapter(workspaceContext);
             context.subscriptions.push(lldbDebugAdapter);
         }

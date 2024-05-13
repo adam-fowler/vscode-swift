@@ -28,7 +28,7 @@ export class DebugAdapter {
 
     /** Debug adapter name */
     static get adapterName(): string {
-        return configuration.debugger.useDebugAdapterFromToolchain && this.debugAdapaterExists
+        return configuration.debugger.debugAdapter === "Toolchain" && this.debugAdapaterExists
             ? "swift-lldb"
             : "lldb";
     }
